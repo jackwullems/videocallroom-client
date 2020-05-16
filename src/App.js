@@ -504,10 +504,7 @@ function App() {
             }
         }).on('end', ()=>endCallHandler(false))
             .emit('init');
-    }, [])
-
-    useEffect(()=>{
-        setInterval(()=>{
+        const intervalID = setInterval(()=>{
             axios.post(server_url + '/' + getonlineusers_path)
             .then((res) => {
                 const onlineUsers = res.data
@@ -516,7 +513,11 @@ function App() {
                 console.log(error.message)
             });
         }, 10000)
+        return () => {
+            clearInterval(intervalID)
+        }
     }, [])
+
 
     const enterVideoCall = () => {
         if (!clientName) {
@@ -653,7 +654,7 @@ function App() {
                     ?
                     <div className={classes.chatRoom}>
                         <ChattingRoom/>
-                        {!_.isEmpty(conf.current) &&
+                        {conf.current &&
                         <CallWindow
                             status={callWindow}
                             localSrc={localSrc}
